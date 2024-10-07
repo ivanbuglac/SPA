@@ -1,6 +1,7 @@
 export default class PostItem {
-	constructor(post) {
+	constructor(post, onDelete) {
 		this.post = post
+		this.onDelete = onDelete
 	}
 
 	render() {
@@ -12,6 +13,9 @@ export default class PostItem {
             <p>${this.post.body}</p>
             <button class="dlt-btn">X</button>
         `
+
+		const deleteButton = wrapper.querySelector('.dlt-btn')
+		deleteButton.addEventListener('click', () => this.onDelete(this.post.id))
 
 		return wrapper
 	}
