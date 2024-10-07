@@ -1,0 +1,31 @@
+{
+	"name": "single-page-aplication",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "webpack server",
+		"dev": "webpack",
+		"prod": "webpack --node-env=production",
+		"clear": "rd/s/q/dist"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@babel/core": "^7.25.7",
+		"@babel/preset-env": "^7.25.7",
+		"babel-loader": "^9.2.1",
+		"css-loader": "^7.1.2",
+		"html-loader": "^5.1.0",
+		"html-webpack-plugin": "^5.6.0",
+		"mini-css-extract-plugin": "^2.9.1",
+		"style-loader": "^4.0.0",
+		"webpack": "^5.95.0",
+		"webpack-cli": "^5.1.4",
+		"webpack-dev-server": "^5.1.0"
+	},
+	"dependencies": {
+		"@babel/polyfill": "^7.12.1"
+	}
+}
