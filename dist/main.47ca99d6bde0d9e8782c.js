@@ -846,8 +846,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ PostItem)
 /* harmony export */ });
 class PostItem {
-  constructor(post) {
+  constructor(post, onDelete) {
     this.post = post;
+    this.onDelete = onDelete;
   }
   render() {
     const wrapper = document.createElement('div');
@@ -857,6 +858,8 @@ class PostItem {
             <p>${this.post.body}</p>
             <button class="dlt-btn">X</button>
         `;
+    const deleteButton = wrapper.querySelector('.dlt-btn');
+    deleteButton.addEventListener('click', () => this.onDelete(this.post.id));
     return wrapper;
   }
 }
@@ -896,6 +899,37 @@ class PostList {
       const postElement = postItem.render();
       postListElement.appendChild(postElement);
     });
+  }
+}
+
+/***/ }),
+
+/***/ "./src/components/Search.js":
+/*!**********************************!*\
+  !*** ./src/components/Search.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SearchBar)
+/* harmony export */ });
+/* harmony import */ var _helpers_debounce_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../helpers/debounce.js */ "./src/helpers/debounce.js");
+
+class SearchBar {
+  constructor(onSearch) {
+    this.onSearch = (0,_helpers_debounce_js__WEBPACK_IMPORTED_MODULE_0__.debounce)(onSearch, 700);
+  }
+  handleInput(event) {
+    const searchTerm = event.target.value;
+    this.onSearch(searchTerm);
+  }
+  render() {
+    document.getElementById('search-bar').innerHTML = `
+            <input type="text" id="search-input" placeholder="Поиск" />
+        `;
+    document.getElementById('search-input').addEventListener('input', this.handleInput.bind(this));
   }
 }
 
@@ -957,6 +991,31 @@ const posts = [{
 
 /***/ }),
 
+/***/ "./src/helpers/debounce.js":
+/*!*********************************!*\
+  !*** ./src/helpers/debounce.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   debounce: () => (/* binding */ debounce)
+/* harmony export */ });
+function debounce(func, wait) {
+  let timeout;
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -972,8 +1031,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_polyfill__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_polyfill__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _index_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../index.html */ "./index.html");
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../style.css */ "./style.css");
-/* harmony import */ var _components_PostList_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/PostList.js */ "./src/components/PostList.js");
-/* harmony import */ var _data_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./data/info.js */ "./src/data/info.js");
+/* harmony import */ var _components_Search_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Search.js */ "./src/components/Search.js");
+/* harmony import */ var _components_PostList_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/PostList.js */ "./src/components/PostList.js");
+/* harmony import */ var _data_info_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./data/info.js */ "./src/data/info.js");
+
 
 
 
@@ -981,10 +1042,16 @@ __webpack_require__.r(__webpack_exports__);
 
 class MainApp {
   constructor() {
-    this.posts = _data_info_js__WEBPACK_IMPORTED_MODULE_4__["default"];
-    this.filteredPosts = _data_info_js__WEBPACK_IMPORTED_MODULE_4__["default"];
-    this.postList = new _components_PostList_js__WEBPACK_IMPORTED_MODULE_3__["default"](this.filteredPosts);
+    this.posts = _data_info_js__WEBPACK_IMPORTED_MODULE_5__["default"];
+    this.filteredPosts = _data_info_js__WEBPACK_IMPORTED_MODULE_5__["default"];
+    this.searchBar = new _components_Search_js__WEBPACK_IMPORTED_MODULE_3__["default"](this.handleSearch.bind(this));
+    this.postList = new _components_PostList_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.filteredPosts);
     this.render();
+  }
+  handleSearch(searchTerm) {
+    const lowerCaseTerm = searchTerm.toLowerCase();
+    this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(lowerCaseTerm));
+    this.postList.updatePosts(this.filteredPosts);
   }
   render() {
     document.getElementById('app').innerHTML = `
@@ -993,6 +1060,7 @@ class MainApp {
                 <div id="post-list"></div>
             </div>
         `;
+    this.searchBar.render();
     this.postList.render();
   }
 }
@@ -10277,7 +10345,6 @@ var code = `<!DOCTYPE html>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>SPA Posts Search</title>
-		<!-- <link rel="stylesheet" href="style.css" /> -->
 	</head>
 	<body>
 		<div id="app"></div>
@@ -10697,4 +10764,4 @@ module.exports = styleTagTransform;
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=main.d281a6348889fde733dd.js.map
+//# sourceMappingURL=main.47ca99d6bde0d9e8782c.js.map

@@ -12,6 +12,8 @@ export default class MainApp {
 		this.searchBar = new SearchBar(this.handleSearch.bind(this))
 		this.postList = new PostList(this.filteredPosts)
 
+		this.appContainer = document.querySelector('#app')
+
 		this.render()
 	}
 
@@ -24,14 +26,18 @@ export default class MainApp {
 	}
 
 	render() {
-		document.getElementById('app').innerHTML = `
+		this.appContainer.innerHTML = `
             <div class="app-container">
                 <div id="search-bar"></div>
                 <div id="post-list"></div>
             </div>
         `
-		this.searchBar.render()
-		this.postList.render()
+
+		const searchBarContainer = this.appContainer.querySelector('#search-bar')
+		const postListContainer = this.appContainer.querySelector('#post-list')
+
+		this.searchBar.render(searchBarContainer)
+		this.postList.render(postListContainer)
 	}
 }
 

@@ -10,12 +10,11 @@ export default class SearchBar {
 		this.onSearch(searchTerm)
 	}
 
-	render() {
-		document.getElementById('search-bar').innerHTML = `
+	render(container) {
+		container.innerHTML = `
             <input type="text" id="search-input" placeholder="Поиск" />
         `
-		document
-			.getElementById('search-input')
-			.addEventListener('input', this.handleInput.bind(this))
+		const searchInput = container.querySelector('#search-input')
+		searchInput.addEventListener('input', this.handleInput.bind(this))
 	}
 }
