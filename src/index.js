@@ -12,7 +12,7 @@ export default class MainApp {
 		this.postList = new PostList(this.filteredPosts)
 		this.appContainer = document.querySelector('#app')
 
-		this.fetchPosts() // Убедитесь, что этот метод вызывается
+		this.fetchPosts()
 		this.render()
 	}
 
@@ -50,7 +50,7 @@ export default class MainApp {
 		const searchBarContainer = this.appContainer.querySelector('#search-bar')
 
 		this.searchBar.render(searchBarContainer)
-		this.postList.updatePosts(this.filteredPosts) // Обновляем список постов
+		this.postList.updatePosts(this.filteredPosts)
 	}
 }
 
