@@ -18,14 +18,14 @@ export default class MainApp {
 
 	async fetchPosts() {
 		try {
-			const response = await fetch('/post.json') // Путь должен начинаться с "/"
+			const response = await fetch('/post.json')
 			if (!response.ok) {
 				throw new Error('Ошибка при загрузке постов')
 			}
 			const data = await response.json()
-			this.posts = data // Заполняем массив данными из JSON
-			this.filteredPosts = data // Обновляем отфильтрованные посты
-			this.render() // Отрисовываем посты
+			this.posts = data
+			this.filteredPosts = data
+			this.render()
 		} catch (error) {
 			console.error('Ошибка загрузки данных:', error)
 		}
