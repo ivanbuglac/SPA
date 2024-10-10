@@ -3,18 +3,32 @@ import '../index.html'
 import '../style.css'
 import SearchBar from './components/Search.js'
 import PostList from './components/PostList.js'
-import posts from './data/info.js'
 
 export default class MainApp {
 	constructor() {
-		this.posts = posts
-		this.filteredPosts = posts
+		this.posts = []
+		this.filteredPosts = []
 		this.searchBar = new SearchBar(this.handleSearch.bind(this))
 		this.postList = new PostList(this.filteredPosts)
-
 		this.appContainer = document.querySelector('#app')
 
+		this.fetchPosts() // Убедитесь, что этот метод вызывается
 		this.render()
+	}
+
+	async fetchPosts() {
+		try {
+			const response = await fetch('/post.json') // Путь должен начинаться с "/"
+			if (!response.ok) {
+				throw new Error('Ошибка при загрузке постов')
+			}
+			const data = await response.json()
+			this.posts = data // Заполняем массив данными из JSON
+			this.filteredPosts = data // Обновляем отфильтрованные посты
+			this.render() // Отрисовываем посты
+		} catch (error) {
+			console.error('Ошибка загрузки данных:', error)
+		}
 	}
 
 	handleSearch(searchTerm) {
@@ -27,17 +41,16 @@ export default class MainApp {
 
 	render() {
 		this.appContainer.innerHTML = `
-            <div class="app-container">
-                <div id="search-bar"></div>
-                <div id="post-list"></div>
-            </div>
-        `
+        <div class="app-container">
+            <div id="search-bar"></div>
+            <div id="post-list"></div>
+        </div>
+    `
 
 		const searchBarContainer = this.appContainer.querySelector('#search-bar')
-		const postListContainer = this.appContainer.querySelector('#post-list')
 
 		this.searchBar.render(searchBarContainer)
-		this.postList.render(postListContainer)
+		this.postList.updatePosts(this.filteredPosts) // Обновляем список постов
 	}
 }
 

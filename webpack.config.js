@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const mode = process.env.NODE_ENW || 'development'
 
@@ -30,6 +31,11 @@ module.exports = {
 		}),
 		new MiniCssExtractPlugin({
 			filename: '[name].[contenthash].css',
+		}),
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'src/post.json', to: 'post.json' }, // Копируем файл JSON
+			],
 		}),
 	],
 	module: {

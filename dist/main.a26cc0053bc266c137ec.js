@@ -925,69 +925,14 @@ class SearchBar {
     const searchTerm = event.target.value;
     this.onSearch(searchTerm);
   }
-  render() {
-    document.getElementById('search-bar').innerHTML = `
+  render(container) {
+    container.innerHTML = `
             <input type="text" id="search-input" placeholder="Поиск" />
         `;
-    document.getElementById('search-input').addEventListener('input', this.handleInput.bind(this));
+    const searchInput = container.querySelector('#search-input');
+    searchInput.addEventListener('input', this.handleInput.bind(this));
   }
 }
-
-/***/ }),
-
-/***/ "./src/data/info.js":
-/*!**************************!*\
-  !*** ./src/data/info.js ***!
-  \**************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-const posts = [{
-  id: 1,
-  name: 'Первый пост',
-  body: 'Это содержимое первого поста. Здесь вы можете узнать много интересного!'
-}, {
-  id: 2,
-  name: 'Второй пост',
-  body: 'Во втором посте мы обсуждаем различные темы. Не пропустите!'
-}, {
-  id: 3,
-  name: 'Третий пост',
-  body: 'Третий пост посвящен новым технологиям и инновациям в нашей жизни.'
-}, {
-  id: 4,
-  name: 'Четвёртый пост',
-  body: 'Здесь мы поговорим о личном развитии и самообразовании.'
-}, {
-  id: 5,
-  name: 'Пятый пост',
-  body: 'В пятом посте мы рассмотрим увлекательные факты о мире.'
-}, {
-  id: 6,
-  name: 'Шестой пост',
-  body: 'Шестой пост посвящён советам по улучшению продуктивности.'
-}, {
-  id: 7,
-  name: 'Седьмой пост',
-  body: 'В этом посте мы обсудим самые популярные книги года.'
-}, {
-  id: 8,
-  name: 'Восьмой пост',
-  body: 'Этот пост будет о путешествиях и лучших местах для отдыха.'
-}, {
-  id: 9,
-  name: 'Девятый пост',
-  body: 'Девятый пост расскажет о здоровом образе жизни и правильном питании.'
-}, {
-  id: 10,
-  name: 'Десятый пост',
-  body: 'В заключительном посте мы подведем итоги и сделаем выводы.'
-}];
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (posts);
 
 /***/ }),
 
@@ -1033,8 +978,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../style.css */ "./style.css");
 /* harmony import */ var _components_Search_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Search.js */ "./src/components/Search.js");
 /* harmony import */ var _components_PostList_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/PostList.js */ "./src/components/PostList.js");
-/* harmony import */ var _data_info_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./data/info.js */ "./src/data/info.js");
-
 
 
 
@@ -1042,11 +985,27 @@ __webpack_require__.r(__webpack_exports__);
 
 class MainApp {
   constructor() {
-    this.posts = _data_info_js__WEBPACK_IMPORTED_MODULE_5__["default"];
-    this.filteredPosts = _data_info_js__WEBPACK_IMPORTED_MODULE_5__["default"];
+    this.posts = [];
+    this.filteredPosts = [];
     this.searchBar = new _components_Search_js__WEBPACK_IMPORTED_MODULE_3__["default"](this.handleSearch.bind(this));
     this.postList = new _components_PostList_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.filteredPosts);
+    this.appContainer = document.querySelector('#app');
+    this.fetchPosts(); // Убедитесь, что этот метод вызывается
     this.render();
+  }
+  async fetchPosts() {
+    try {
+      const response = await fetch('/post.json'); // Путь должен начинаться с "/"
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке постов');
+      }
+      const data = await response.json();
+      this.posts = data; // Заполняем массив данными из JSON
+      this.filteredPosts = data; // Обновляем отфильтрованные посты
+      this.render(); // Отрисовываем посты
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+    }
   }
   handleSearch(searchTerm) {
     const lowerCaseTerm = searchTerm.toLowerCase();
@@ -1054,14 +1013,15 @@ class MainApp {
     this.postList.updatePosts(this.filteredPosts);
   }
   render() {
-    document.getElementById('app').innerHTML = `
-            <div class="app-container">
-                <div id="search-bar"></div>
-                <div id="post-list"></div>
-            </div>
-        `;
-    this.searchBar.render();
-    this.postList.render();
+    this.appContainer.innerHTML = `
+        <div class="app-container">
+            <div id="search-bar"></div>
+            <div id="post-list"></div>
+        </div>
+    `;
+    const searchBarContainer = this.appContainer.querySelector('#search-bar');
+    this.searchBar.render(searchBarContainer);
+    this.postList.updatePosts(this.filteredPosts); // Обновляем список постов
   }
 }
 new MainApp();
@@ -10764,4 +10724,4 @@ module.exports = styleTagTransform;
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=main.47ca99d6bde0d9e8782c.js.map
+//# sourceMappingURL=main.a26cc0053bc266c137ec.js.map
