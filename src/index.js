@@ -12,8 +12,18 @@ export default class MainApp {
 		this.postList = new PostList(this.filteredPosts)
 		this.appContainer = document.querySelector('#app')
 
+		this.appContainer.classList.add('app-container')
+
+		this.searchBarContainer = document.createElement('div')
+		this.postListContainer = document.createElement('div')
+
+		this.searchBarContainer.id = 'search-bar'
+		this.postListContainer.id = 'post-list'
+
+		this.appContainer.appendChild(this.searchBarContainer)
+		this.appContainer.appendChild(this.postListContainer)
+
 		this.fetchPosts()
-		this.render()
 	}
 
 	async fetchPosts() {
@@ -36,21 +46,12 @@ export default class MainApp {
 		this.filteredPosts = this.posts.filter(post =>
 			post.body.toLowerCase().includes(lowerCaseTerm)
 		)
-		this.postList.updatePosts(this.filteredPosts)
+		this.postList.updatePosts(this.filteredPosts, this.postListContainer)
 	}
 
 	render() {
-		this.appContainer.innerHTML = `
-        <div class="app-container">
-            <div id="search-bar"></div>
-            <div id="post-list"></div>
-        </div>
-    `
-
-		const searchBarContainer = this.appContainer.querySelector('#search-bar')
-
-		this.searchBar.render(searchBarContainer)
-		this.postList.updatePosts(this.filteredPosts)
+		this.searchBar.render(this.searchBarContainer)
+		this.postList.updatePosts(this.filteredPosts, this.postListContainer)
 	}
 }
 

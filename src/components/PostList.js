@@ -5,24 +5,27 @@ export default class PostList {
 		this.posts = posts
 	}
 
-	updatePosts(posts) {
+	updatePosts(posts, container) {
 		this.posts = posts
-		this.render()
+		this.render(container)
 	}
 
-	deletePost(postId) {
+	deletePost(postId, container) {
 		this.posts = this.posts.filter(post => post.id !== postId)
-		this.render()
+		this.render(container)
 	}
 
-	render() {
-		const postListElement = document.getElementById('post-list')
-		postListElement.innerHTML = ''
+	render(container) {
+		if (!container) {
+			console.error('Ошибка')
+			return
+		}
+		container.innerHTML = ''
 
 		this.posts.forEach(post => {
-			const postItem = new PostItem(post, this.deletePost.bind(this))
+			const postItem = new PostItem(post, id => this.deletePost(id, container))
 			const postElement = postItem.render()
-			postListElement.appendChild(postElement)
+			container.appendChild(postElement)
 		})
 	}
 }
